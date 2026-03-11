@@ -44,6 +44,24 @@ class TodoTests(unittest.TestCase):
     
     ## What happens when you patch an item that doesn't exit
     
+    def test_updating_noneistent_todo(self):
+        fake_id = 9999999
+        
+        res = self.app.patch(
+            f"todos/{fake_id}", json= {'status': "In Progress"})
+        data = res.get_json()
+        
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data["error"], "Item does not exist")
+    
+    def test_expects_todo_strings_not_numbers(self):
+        res = self.app.post(
+            '/todos',
+            json = {"description": 42})
+        data = res.get_json()
+        
+        self.assertEqual(data["error"], "You cannot create todos with numbers")
+        self.assertEqual(res.status_code, 400)
     
 if __name__ == "__main__":
     unittest.main()

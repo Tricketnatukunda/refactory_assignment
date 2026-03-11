@@ -16,6 +16,10 @@ def create_app():
     @app.post("/todos")
     def add_todo():
         body = request.get_json()
+        
+        if not isinstance(body['description'], str):
+            return jsonify({'error': "You cannot create todos with numbers"}), 400
+        
         new_item = {
             "id": int(time.time()*100),
             "description": body['description'],
@@ -33,5 +37,6 @@ def create_app():
                 item['status'] = body['status']
                 return jsonify(item)
         
+        return jsonify({"error": "Item does not exist"}), 404        
     
     return app
